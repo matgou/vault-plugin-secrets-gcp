@@ -39,6 +39,7 @@ func TestConfig(t *testing.T) {
 		"service_account_email":   "",
 		"identity_token_audience": "",
 		"identity_token_ttl":      int64(0),
+		"universe_domain":         "googleapis.com",
 	}
 
 	testConfigRead(t, b, reqStorage, expected)

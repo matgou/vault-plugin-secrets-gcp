@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/vault/sdk/helper/pluginidentityutil"
 	"github.com/hashicorp/vault/sdk/helper/pluginutil"
 	"github.com/hashicorp/vault/sdk/logical"
+	"github.com/hashicorp/vault/sdk/rotation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,6 +41,10 @@ func TestConfig(t *testing.T) {
 		"identity_token_audience": "",
 		"identity_token_ttl":      int64(0),
 		"universe_domain":         "googleapis.com",
+		"rotation_window":            0,
+		"rotation_period":            0,
+		"rotation_schedule":          "",
+		"disable_automated_rotation": false,
 	}
 
 	testConfigRead(t, b, reqStorage, expected)
@@ -103,7 +108,6 @@ func testConfigRead(t *testing.T, b logical.Backend, s logical.Storage, expected
 		Path:      "config",
 		Storage:   s,
 	})
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -158,4 +162,8 @@ type testSystemView struct {
 
 func (d testSystemView) GenerateIdentityToken(_ context.Context, _ *pluginutil.IdentityTokenRequest) (*pluginutil.IdentityTokenResponse, error) {
 	return nil, pluginidentityutil.ErrPluginWorkloadIdentityUnsupported
+}
+
+func (d testSystemView) DeregisterRotationJob(_ context.Context, _ *rotation.RotationJobDeregisterRequest) error {
+	return nil
 }
